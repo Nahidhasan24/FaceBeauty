@@ -4,7 +4,7 @@
 
 ```kotlin
 implementation("io.livekit:livekit-android:<your version>")       // tested with 2.28.1
-implementation("com.github.YOUR_GITHUB_USER.FaceBeauty:beauty-livekit:1.0.0")
+implementation("com.github.Nahidhasan24.FaceBeauty:beauty-livekit:1.0.0")
 ```
 
 `beauty-livekit` uses LiveKit as `compileOnly`, so your app's LiveKit version is the one in use.

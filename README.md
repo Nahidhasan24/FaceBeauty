@@ -29,9 +29,9 @@ dependencyResolutionManagement {
 
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.YOUR_GITHUB_USER.FaceBeauty:beauty:1.0.0")
+    implementation("com.github.Nahidhasan24.FaceBeauty:beauty:1.0.0")
     // Only for LiveKit video calls (your app provides io.livekit:livekit-android):
-    implementation("com.github.YOUR_GITHUB_USER.FaceBeauty:beauty-livekit:1.0.0")
+    implementation("com.github.Nahidhasan24.FaceBeauty:beauty-livekit:1.0.0")
 }
 
 android {
@@ -106,6 +106,6 @@ A runnable sample is in [`app/`](app): a CameraX preview, the LiveKit pipeline w
 | `beauty` | Core: `BeautyGLView`, `BeautyImageProcessor`, `BeautyRenderer`, `SyncedBeautyRenderer`, `FaceTracker`, `BeautyParams`, `ColorGrade`, `BeautyConfig`, `BeautyPanelView`, `BeautyCatalog` |
 | `beauty-livekit` | `BeautyVideoProcessor` (LiveKit/WebRTC `VideoProcessor`), `BeautyCameraCapturer` |
 
-## Third-party components
+## License
 
-See [NOTICE](NOTICE). It covers the MediaPipe Face Landmarker model and the canonical face mesh, both Apache 2.0.
+Apache License 2.0, see [LICENSE](LICENSE). Third-party components (the MediaPipe Face Landmarker model and canonical face mesh, both Apache 2.0) are listed in [NOTICE](NOTICE).
