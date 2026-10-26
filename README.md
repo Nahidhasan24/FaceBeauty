@@ -10,6 +10,7 @@ Real-time, on-device face beautification for Android: skin retouch, face reshape
 * **Fast on budget hardware.** Measured on a Helio G85 / Mali-G52 phone: 24 fps camera-in and video-out, about 10–14 ms of GPU per frame with every effect on.
 * **Frame-accurate.** Makeup, lipstick and reshaping are computed from the landmarks of the *same* frame, so they never slide off the face, even when the landmark model is slower than the camera.
 * **Ready-made UI.** A TikTok-style effect selector (`BeautyPanelView`), or build your own from `BeautyCatalog`.
+* **Java and Kotlin.** The library is written in Java. Every example below is shown in both languages, and the **[Java guide](docs/java.md)** walks through every integration in Java.
 
 | Category | Effects |
 |---|---|
@@ -50,9 +51,32 @@ android {
 }
 ```
 
+Groovy (`settings.gradle` / `app/build.gradle`):
+
+```groovy
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.Nahidhasan24.FaceBeauty:beauty:1.0.1'
+    implementation 'com.github.Nahidhasan24.FaceBeauty:beauty-livekit:1.0.1'   // LiveKit only
+}
+
+android {
+    androidResources { noCompress 'task' }
+}
+```
+
 Requirements: `minSdk 24`, OpenGL ES 2.0+, camera permission. The face model ships inside the AAR, and R8/ProGuard rules are applied automatically.
 
 ## Quick start: LiveKit video call
+
+**Kotlin**
 
 ```kotlin
 val beauty = BeautyVideoProcessor(context, room.lkObjects.eglBase)
@@ -73,8 +97,7 @@ panel.setListener { params -> beauty.setParams(params) }
 panel.setCompareListener { original -> beauty.isEnabled = !original }
 ```
 
-<details>
-<summary><b>Java</b></summary>
+**Java**
 
 LiveKit's API is Kotlin-first (default arguments, `suspend` functions), so `BeautyLiveKit` wraps the calls Java needs:
 
@@ -99,7 +122,6 @@ panel.setCompareListener(original -> beauty.setEnabled(!original));
 ```
 
 A complete Java screen is in [`LiveKitJavaActivity.java`](app/src/main/java/com/facebeauty/sample/LiveKitJavaActivity.java).
-</details>
 
 ## Quick start: camera preview
 
@@ -109,6 +131,8 @@ A complete Java screen is in [`LiveKitJavaActivity.java`](app/src/main/java/com/
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 ```
+
+**Kotlin**
 
 ```kotlin
 beautyView.setParams(BeautyParams.glow())
@@ -124,8 +148,7 @@ preview.setSurfaceProvider(mainExecutor) { request ->           // CameraX Previ
 }
 ```
 
-<details>
-<summary><b>Java</b></summary>
+**Java**
 
 ```java
 beautyView.setParams(BeautyParams.glow());
@@ -142,12 +165,12 @@ preview.setSurfaceProvider(mainExecutor, request -> {           // CameraX Previ
 ```
 
 A complete Java camera screen (CameraX, effect panel, capture, photo editing) is in [`MainActivity.java`](app/src/main/java/com/facebeauty/sample/MainActivity.java).
-</details>
 
 ## Documentation
 
 | Guide | |
 |---|---|
+| **[Java guide](docs/java.md)** | **Every integration in Java: camera screen, effect panel, effects, photos and video, LiveKit, custom UI** |
 | [Getting started](docs/getting-started.md) | Install, camera preview, photos, lifecycle |
 | [LiveKit integration](docs/livekit.md) | Beautify a published camera track, capturer, lifecycle, settings |
 | [Effects reference](docs/effects.md) | Every `BeautyParams` field, presets, filters, custom LUTs |
