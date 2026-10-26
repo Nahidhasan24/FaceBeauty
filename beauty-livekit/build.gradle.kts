@@ -27,6 +27,8 @@ dependencies {
     api(project(":beauty"))
     // Provided by the app, so the app's LiveKit version is the one used.
     compileOnly(libs.livekit.android)
+    // BeautyLiveKit calls LiveKit's suspend functions; coroutines come with LiveKit at runtime.
+    compileOnly(libs.kotlinx.coroutines.android)
 }
 
 afterEvaluate {

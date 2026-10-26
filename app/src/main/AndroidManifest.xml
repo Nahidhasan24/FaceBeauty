@@ -29,7 +29,16 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Material.NoActionBar" />
         <activity
+            android:name=".LiveKitJavaActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+        <activity
             android:name=".BenchActivity"
+            android:exported="true" />
+        <activity
+            android:name=".DemoRenderActivity"
             android:exported="true" />
     </application>
 </manifest>

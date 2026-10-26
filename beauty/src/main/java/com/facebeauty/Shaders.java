@@ -161,7 +161,8 @@ final class Shaders {
             + "uniform float uFade;\n"
             + "varying vec2 vTex;\n"
             + "void main() {\n"
-            + "  gl_FragColor = vec4(texture2D(uTex, vTex).rgb * uFade, 1.0);\n"
+            // All four channels are data (A = lashes / smile-line folds), so alpha must pass through.
+            + "  gl_FragColor = texture2D(uTex, vTex) * uFade;\n"
             + "}\n";
 
     /**

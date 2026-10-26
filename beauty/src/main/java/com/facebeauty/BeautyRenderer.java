@@ -575,11 +575,21 @@ public final class BeautyRenderer {
             float cx = px(lm, c, w), cy = py(lm, c, h);
             float r = 0f;
             for (int k = 1; k <= 4; k++) r += (float) Math.hypot(px(lm, c + k, w) - cx, py(lm, c + k, h) - cy);
+            // Fade the lens out as the eye closes (blinks, laughing) so no colour line is left
+            // on the lid. Openness = lid gap / eye width of the eye this iris belongs to.
+            float dr = Math.abs(cx - centroidX(lm, FaceRegions.RIGHT_EYE, w));
+            float dl = Math.abs(cx - centroidX(lm, FaceRegions.LEFT_EYE, w));
+            float open = dr < dl
+                    ? dist(lm, FaceRegions.RIGHT_UPPER_LID, FaceRegions.RIGHT_LOWER_LID, w, h)
+                    / Math.max(1f, dist(lm, FaceRegions.RIGHT_EYE_OUTER, FaceRegions.RIGHT_EYE_INNER, w, h))
+                    : dist(lm, FaceRegions.LEFT_UPPER_LID, FaceRegions.LEFT_LOWER_LID, w, h)
+                    / Math.max(1f, dist(lm, FaceRegions.LEFT_EYE_OUTER, FaceRegions.LEFT_EYE_INNER, w, h));
+            float openFade = clamp01((open - 0.12f) / 0.1f);
             int i = irisCount * 4;
             iris[i] = cx;
             iris[i + 1] = cy;
             iris[i + 2] = r / 4f;
-            iris[i + 3] = presence;
+            iris[i + 3] = presence * openFade;
             irisCount++;
         }
     }

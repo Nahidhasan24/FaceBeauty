@@ -36,6 +36,10 @@ final class FaceRegions {
     static final int LEFT_EYE_OUTER = 263;
     static final int RIGHT_NOSE_WING = 98;
     static final int LEFT_NOSE_WING = 327;
+    static final int RIGHT_UPPER_LID = 159;
+    static final int RIGHT_LOWER_LID = 145;
+    static final int LEFT_UPPER_LID = 386;
+    static final int LEFT_LOWER_LID = 374;
     static final int UPPER_LIP = 13;
     static final int LOWER_LIP = 14;
     static final int MOUTH_RIGHT = 61;

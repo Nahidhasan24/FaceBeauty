@@ -4,7 +4,7 @@
 
 ```kotlin
 implementation("io.livekit:livekit-android:<your version>")       // tested with 2.28.1
-implementation("com.github.Nahidhasan24.FaceBeauty:beauty-livekit:1.0.0")
+implementation("com.github.Nahidhasan24.FaceBeauty:beauty-livekit:1.0.1")
 ```
 
 `beauty-livekit` uses LiveKit as `compileOnly`, so your app's LiveKit version is the one in use.
@@ -56,6 +56,67 @@ room.initVideoRenderer(renderer)       // SurfaceViewRenderer / TextureViewRende
 renderer.setMirror(true)               // selfie-style mirror, front camera only
 track.addRenderer(renderer)
 ```
+
+### Java
+
+LiveKit's Android API is Kotlin-first: default arguments and `suspend` functions such as `connect` and `publishVideoTrack`. `BeautyLiveKit` gives Java code plain methods with callbacks on the main thread:
+
+| `BeautyLiveKit` | |
+|---|---|
+| `createCameraTrack(context, room, beauty, frontCamera, capture)` | Track with `BeautyCameraCapturer` + your `BeautyVideoProcessor`; capture started |
+| `connect(room, url, token, Callback<Object>)` | `room.connect(url, token)` |
+| `publish(room, track, Callback<Boolean>)` | `publishVideoTrack(track)` with the room's publish defaults |
+
+```java
+public class CallActivity extends ComponentActivity {
+    private Room room;
+    private BeautyVideoProcessor beauty;
+    private LocalVideoTrack track;
+
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        room = LiveKit.INSTANCE.create(getApplicationContext(), new RoomOptions(), new LiveKitOverrides());
+        beauty = new BeautyVideoProcessor(this, room.getLkObjects().getEglBase());
+        beauty.setParams(BeautyParams.natural());
+
+        SurfaceViewRenderer renderer = findViewById(R.id.renderer);
+        room.initVideoRenderer(renderer);
+        renderer.setMirror(true);
+
+        track = BeautyLiveKit.createCameraTrack(this, room, beauty, true, VideoPreset169.H720.getCapture());
+        track.addRenderer(renderer);
+
+        BeautyLiveKit.connect(room, URL, TOKEN, new BeautyLiveKit.Callback<Object>() {
+            @Override public void onSuccess(Object unused) {
+                BeautyLiveKit.publish(room, track, new BeautyLiveKit.Callback<Boolean>() {
+                    @Override public void onSuccess(Boolean ok) { /* live */ }
+                    @Override public void onError(Throwable e) { Log.e("Call", "publish", e); }
+                });
+            }
+            @Override public void onError(Throwable e) { Log.e("Call", "connect", e); }
+        });
+
+        BeautyPanelView panel = findViewById(R.id.beautyPanel);
+        panel.setListener(beauty::setParams);
+        panel.setCompareListener(original -> beauty.setEnabled(!original));
+    }
+
+    void flip(boolean front) {
+        track.switchCamera(null, front ? CameraPosition.FRONT : CameraPosition.BACK);
+    }
+
+    @Override protected void onDestroy() {
+        track.stopCapture();
+        track.dispose();
+        beauty.dispose();
+        room.disconnect();
+        room.release();
+        super.onDestroy();
+    }
+}
+```
+
+The full screen is in the sample: [`LiveKitJavaActivity.java`](../app/src/main/java/com/facebeauty/sample/LiveKitJavaActivity.java). If your app already calls LiveKit from Kotlin, you don't need `BeautyLiveKit`.
 
 ### Do not use `setCameraEnabled(true)`
 

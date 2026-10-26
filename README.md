@@ -1,6 +1,10 @@
 # FaceBeauty
 
+[![](https://jitpack.io/v/Nahidhasan24/FaceBeauty.svg)](https://jitpack.io/#Nahidhasan24/FaceBeauty)
+
 Real-time, on-device face beautification for Android: skin retouch, face reshape, makeup, eye effects and colour filters, similar to Snapchat or TikTok beauty. It is built for **low-end phones** and **live video**, with a drop-in [LiveKit](https://livekit.io) integration.
+
+<p align="center"><img src="docs/images/hero.webp" width="640" alt="Original video next to FaceBeauty looks: Natural, White, Golden, Glam makeup, Lenses and lashes, Reshape"></p>
 
 * **On-device.** Nothing leaves the phone. MediaPipe's 478-point face landmarks run on the CPU; every effect is a GPU shader.
 * **Fast on budget hardware.** Measured on a Helio G85 / Mali-G52 phone: 24 fps camera-in and video-out, about 10–14 ms of GPU per frame with every effect on.
@@ -14,6 +18,12 @@ Real-time, on-device face beautification for Android: skin retouch, face reshape
 | Reshape | Big eyes, Slim face, Small face, V chin, Chin length ±, Cheekbones, Forehead ±, Slim nose, Nose length ±, Mouth ±, Eye distance ± |
 | Eyes | Bright eyes, Coloured lenses, Lashes, Eyeliner, Eyeshadow, Dark circles |
 | Makeup | Lipstick (with gloss), Blush, Eyeshadow, Eyeliner, Lashes, Teeth whitening |
+
+![The same looks on three different faces](docs/images/gallery.jpg)
+
+<p align="center"><img src="docs/images/panel.png" width="480" alt="BeautyPanelView effect selector, Eyes tab with lens colours"></p>
+
+<sub>Every frame above was rendered by this library (`BeautyImageProcessor.processVideoFrame`) on a Helio G85 phone. Source footage: free stock clips from [Mixkit](https://mixkit.co) ([4756](https://mixkit.co/free-stock-video/girl-smiling-portrait-in-the-library-4756/), [4535](https://mixkit.co/free-stock-video/portrait-of-a-smiling-man-4535/), [4883](https://mixkit.co/free-stock-video/a-girls-face-in-detail-while-smiling-4883/)), used under the Mixkit Stock Video Free License.</sub>
 
 ## Install (JitPack)
 
@@ -29,9 +39,9 @@ dependencyResolutionManagement {
 
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.Nahidhasan24.FaceBeauty:beauty:1.0.0")
+    implementation("com.github.Nahidhasan24.FaceBeauty:beauty:1.0.1")
     // Only for LiveKit video calls (your app provides io.livekit:livekit-android):
-    implementation("com.github.Nahidhasan24.FaceBeauty:beauty-livekit:1.0.0")
+    implementation("com.github.Nahidhasan24.FaceBeauty:beauty-livekit:1.0.1")
 }
 
 android {
@@ -63,6 +73,34 @@ panel.setListener { params -> beauty.setParams(params) }
 panel.setCompareListener { original -> beauty.isEnabled = !original }
 ```
 
+<details>
+<summary><b>Java</b></summary>
+
+LiveKit's API is Kotlin-first (default arguments, `suspend` functions), so `BeautyLiveKit` wraps the calls Java needs:
+
+```java
+Room room = LiveKit.INSTANCE.create(getApplicationContext(), new RoomOptions(), new LiveKitOverrides());
+BeautyVideoProcessor beauty = new BeautyVideoProcessor(this, room.getLkObjects().getEglBase());
+beauty.setParams(BeautyParams.natural());
+
+// Beautified front-camera track (capture starts; local preview works before connecting).
+LocalVideoTrack track = BeautyLiveKit.createCameraTrack(this, room, beauty, true, VideoPreset169.H720.getCapture());
+track.addRenderer(renderer);                 // after room.initVideoRenderer(renderer)
+
+BeautyLiveKit.connect(room, url, token, new BeautyLiveKit.Callback<Object>() {
+    @Override public void onSuccess(Object unused) { BeautyLiveKit.publish(room, track, null); }
+    @Override public void onError(Throwable error) { Log.e("Call", "connect failed", error); }
+});
+
+// Effect selector bound to the call:
+BeautyPanelView panel = new BeautyPanelView(this);
+panel.setListener(beauty::setParams);
+panel.setCompareListener(original -> beauty.setEnabled(!original));
+```
+
+A complete Java screen is in [`LiveKitJavaActivity.java`](app/src/main/java/com/facebeauty/sample/LiveKitJavaActivity.java).
+</details>
+
 ## Quick start: camera preview
 
 ```xml
@@ -85,6 +123,26 @@ preview.setSurfaceProvider(mainExecutor) { request ->           // CameraX Previ
     }
 }
 ```
+
+<details>
+<summary><b>Java</b></summary>
+
+```java
+beautyView.setParams(BeautyParams.glow());
+preview.setSurfaceProvider(mainExecutor, request -> {           // CameraX Preview use case
+    Size res = request.getResolution();
+    beautyView.requestInputSurface(res.getWidth(), res.getHeight(), st -> {
+        Surface surface = new Surface(st);
+        request.provideSurface(surface, mainExecutor, result -> {
+            surface.release();
+            beautyView.releaseInputSurface(st);
+        });
+    });
+});
+```
+
+A complete Java camera screen (CameraX, effect panel, capture, photo editing) is in [`MainActivity.java`](app/src/main/java/com/facebeauty/sample/MainActivity.java).
+</details>
 
 ## Documentation
 

@@ -30,6 +30,22 @@ panel.setCompareListener { showOriginal ->       // while ◐ is held
 panel.selectCategory(BeautyCatalog.Category.MAKEUP)
 ```
 
+Java:
+
+```java
+BeautyPanelView panel = findViewById(R.id.beautyPanel);
+panel.setParams(BeautyParams.natural());
+panel.setListener(params -> videoProcessor.setParams(params));
+panel.setCompareListener(showOriginal -> videoProcessor.setEnabled(!showOriginal));
+panel.selectCategory(BeautyCatalog.Category.MAKEUP);
+
+// Your own UI from the catalog:
+for (BeautyCatalog.Item item : BeautyCatalog.items(BeautyCatalog.Category.RESHAPE)) {
+    float value = item.get(params);           // -1..1 if item.bipolar, else 0..1
+    item.set(params, 0.4f);
+}
+```
+
 `getParams()` returns the panel's live object. Copy it (`params.copy()`) if you store it, for example to save the user's look:
 
 ```kotlin
