@@ -1,0 +1,15 @@
+FaceBeauty includes third-party components:
+
+MediaPipe Face Landmarker model (beauty/src/main/assets/face_landmarker.task)
+  Copyright Google LLC. Licensed under the Apache License, Version 2.0.
+  https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker
+
+MediaPipe canonical face mesh (triangles and UV layout in FaceMesh.java,
+derived from mediapipe/modules/face_geometry/data/canonical_face_model.obj)
+  Copyright Google LLC. Licensed under the Apache License, Version 2.0.
+  https://github.com/google-ai-edge/mediapipe
+
+Runtime dependencies (not bundled): MediaPipe Tasks Vision (Apache 2.0);
+LiveKit Android SDK (Apache 2.0) for the beauty-livekit module.
+
+Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0

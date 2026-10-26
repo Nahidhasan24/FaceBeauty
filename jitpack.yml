@@ -1,0 +1,5 @@
+# JitPack build: only the two library modules (the sample app is not published).
+jdk:
+  - openjdk17
+install:
+  - ./gradlew :beauty:publishToMavenLocal :beauty-livekit:publishToMavenLocal --no-daemon

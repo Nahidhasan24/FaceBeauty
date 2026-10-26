@@ -1,0 +1,22 @@
+[versions]
+agp = "8.13.2"
+kotlin = "2.4.0"
+mediapipe = "0.10.35"
+camerax = "1.6.2"
+activity = "1.11.0"
+guava = "27.0.1-android"
+livekit = "2.28.1"
+
+[libraries]
+mediapipe-tasks-vision = { group = "com.google.mediapipe", name = "tasks-vision", version.ref = "mediapipe" }
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+livekit-android = { group = "io.livekit", name = "livekit-android", version.ref = "livekit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
